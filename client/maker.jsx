@@ -8,16 +8,35 @@ const handleDomo = (e) => {
 
     const name = e.target.querySelector('#domoName').value;
     const age = e.target.querySelector('#domoAge').value;
+    const hobby = e.target.querySelector('#domoHobby').value;
 
-    if (!name || !age) {
+    if (!name || !age || !hobby) {
         helper.handleError('All fields are required!');
         return false;
     }
 
-    helper.sendPost(e.target.action, { name, age }, loadDomosFromServer);
+    helper.sendPost(e.target.action, { name, age, hobby }, loadDomosFromServer);
 
     return false;
 };
+
+const deleteDomo = async (domoId) => {
+    const response = await fetch(url, {
+        method: 'DELETE',
+        id: domoId,
+        headers: {
+            'Content-type': 'application/json'
+        }
+    });
+    // const data = await response.json();
+
+    if (response.status(200)) {
+        loadDomosFromServer()
+        return response.status(200);
+    } else {
+        return response.status(400).json({ error: "there was an error deleting this domo" });
+    }
+}
 
 const DomoForm = (props) => {
     return (
@@ -33,6 +52,9 @@ const DomoForm = (props) => {
 
             <label htmlFor="age">Age: </label>
             <input id='domoAge' type="number" name='age' min='0' />
+
+            <label htmlFor="hobby">Hobby: </label>
+            <input id='domoHobby' type="text" name='hobby' placeholder='Favourite hobby' />
 
             <input className='makeDomoSubmit' type="submit" value='Make Domo' />
         </form>
@@ -52,8 +74,12 @@ const DomoList = (props) => {
         return (
             <div className="domo" key={domo._id}>
                 <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-                <h3 className="domoName">Name: {domo.name}</h3>
-                <h3 className="domoAge">Age: {domo.age}</h3>
+                <div>
+                    <h3 className="domoName">Name: {domo.name}</h3>
+                    <h3 className="domoAge">Age: {domo.age}</h3>
+                    <h3 className="domoHobby">Hobby: {domo.hobby}</h3>
+                </div>
+                <button className="deleteDomo" onClick={() => deleteDomo(domo._id)}> Delete Domo </button>
             </div>
         );
     });
