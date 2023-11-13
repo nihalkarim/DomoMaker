@@ -21,20 +21,16 @@ const handleDomo = (e) => {
 };
 
 const deleteDomo = async (domoId) => {
-    const response = await fetch(url, {
+    const response = await fetch('/deleteDomo', {
         method: 'DELETE',
-        id: domoId,
         headers: {
             'Content-type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ domoId }),
     });
-    // const data = await response.json();
 
-    if (response.status(200)) {
+    if (response.status === 200) {
         loadDomosFromServer()
-        return response.status(200);
-    } else {
-        return response.status(400).json({ error: "there was an error deleting this domo" });
     }
 }
 
